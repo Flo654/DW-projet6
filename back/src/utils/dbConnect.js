@@ -1,0 +1,24 @@
+import mongoose from "mongoose";
+import dotenv from 'dotenv'
+
+dotenv.config()
+
+const dbConnection = async()=>{
+    try {
+        mongoose.connect(process.env.DB_URL,{
+            dbName: process.env.DB_NAME,
+            user: process.env.DB_USER,
+            pass: process.env.DB_PASS,
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useFindAndModify: false
+        })
+        console.log('connected to Db!')
+    } catch (error) {
+        console.log('no connection with Db !');
+        
+    }
+}
+
+
+export default dbConnection
