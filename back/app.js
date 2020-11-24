@@ -3,7 +3,6 @@ import  express  from "express";
 import bodyParser from "body-parser";
 import path from 'path';
 import cors from 'cors';
-//import 'dotenv/config'
 import dbConnection  from "../back/src/utils/dbConnect";
 
 

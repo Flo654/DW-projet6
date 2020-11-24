@@ -85,56 +85,7 @@ export const deleteSauce = async (req,res,next)=>{
 
 
 //like ou dislike d'une sauce
-/*exports.likeSauce = (req, res, next) => {
-  const userId = req.body.userId;
-  const likes = req.body.like;
-  const id = req.params.id
-  Sauce.findById(id)
-  .then (sauce => {
-    switch (likes) {
-      case 1:
-        if (!sauce.usersLiked.includes(userId)) // ont verifie si l'Id de l'utilisateur n'est pas encore dans le tableau usersLiked 
-        { 
-          console.log('user like')
-          Sauce.findByIdAndUpdate(id, { $inc: {likes: 1}, $push: {usersLiked: userId}}) // on ajoute 1 pour les likes et ont ajoute l'id utilisateur au []usersLiked
-          .then(() => res.status(201).json({ message: 'Avis pris en compte !'}))
-          .catch(error => res.status(400).json({ error }));
-        }
-        break;
 
-      case 0:
-        if (sauce.usersLiked.includes(userId)) // si l'id utilisateur est deja présent dans le tableau usersLiked ont retire son vote et son id du []usersLiked
-         {
-          console.log('user like -1')
-          Sauce.findByIdAndUpdate(id, { $inc: {likes: -1}, $pull: {usersLiked: userId}})
-          .then(() => res.status(201).json({ message: 'Avis retiré !'}))
-          .catch(error => res.status(400).json({ error }));
-        break;
-        } else if (sauce.usersDisliked.includes(userId))  // si l'id utilisateur est deja présent dans le tableau usersDisliked ont retire son vote et son id du []usersDisliked
-         {
-          console.log('user dislike -1')
-          Sauce.findByIdAndUpdate(id, { $inc: {dislikes: -1}, $pull: {usersDisliked: userId}})
-          .then(() => res.status(201).json({ message: 'Avis retiré !'}))
-          .catch(error => res.status(400).json({ error }));
-        }
-        break;
-
-      case -1:
-        if (!sauce.usersDisliked.includes(userId)) // ont verifie si l'Id de l'utilisateur n'est pas encore dans le []usersDisliked
-         {
-          console.log('user dislike')
-          Sauce.findByIdAndUpdate(id, { $inc: {dislikes: 1}, $push: {usersDisliked: userId}}) // on ajoute 1 pour les likes et ont ajoute l'id utilisateur au []usersLiked
-          .then(() => res.status(201).json({ message: 'Avis pris en compte !'}))
-          .catch(error => res.status(400).json({ error }));
-        }
-        break;
-
-      default: break;
-    }
-  })
-  .catch(error => res.status(400).json({ error}));
-}
-*/
 export const likeOrDislikeSauce = async(req, res, next)=>{
   try {
     const userId = req.body.userId;
@@ -154,27 +105,34 @@ export const likeOrDislikeSauce = async(req, res, next)=>{
         break;
 
       case 0:
-        if (sauce.usersLiked.includes(userId)) // si l'id utilisateur est deja présent dans le tableau usersLiked ont retire son vote et son id du []usersLiked
-        {
-          Sauce.findByIdAndUpdate(id, { $inc: {likes: -1}, $pull: {usersLiked: userId}})
-          .then(() => res.status(201).json({ message: 'Like retiré !'}))
-          .catch(error => res.status(400).json({ error }));
-        break;
-        } else if (sauce.usersDisliked.includes(userId))  // si l'id utilisateur est deja présent dans le tableau usersDisliked ont retire son vote et son id du []usersDisliked
-        {
-          Sauce.findByIdAndUpdate(id, { $inc: {dislikes: -1}, $pull: {usersDisliked: userId}})
-          .then(() => res.status(201).json({ message: 'Dislike retiré !'}))
-          .catch(error => res.status(400).json({ error }));
+        try {
+          if (sauce.usersLiked.includes(userId)){ // si l'id utilisateur est deja présent dans le tableau usersLiked ont retire son vote et son id du []usersLiked
+            await Sauce.findByIdAndUpdate(id, { $inc: {likes: -1}, $pull: {usersLiked: userId}})
+            res.status(201).json({ message: 'Like retiré !'})
+            break;
+          } else if (sauce.usersDisliked.includes(userId)){  // si l'id utilisateur est deja présent dans le tableau usersDisliked ont retire son vote et son id du []usersDisliked
+        
+            await Sauce.findByIdAndUpdate(id, { $inc: {dislikes: -1}, $pull: {usersDisliked: userId}})
+            res.status(201).json({ message: 'Dislike retiré !'})
+          }
+          
+        } catch (error) {
+          res.status(400).json({ error })
         }
+        
         break;
 
       case -1:
-        if (!sauce.usersDisliked.includes(userId)) // ont verifie si l'Id de l'utilisateur n'est pas encore dans le []usersDisliked
-        {
-          Sauce.findByIdAndUpdate(id, { $inc: {dislikes: 1}, $push: {usersDisliked: userId}}) // on ajoute 1 pour les likes et ont ajoute l'id utilisateur au []usersLiked
-          .then(() => res.status(201).json({ message: "Vous n'avez pas aimé cette sauce !"}))
-          .catch(error => res.status(400).json({ error }));
-        }
+        try {
+          if (!sauce.usersDisliked.includes(userId)){ // ont verifie si l'Id de l'utilisateur n'est pas encore dans le []usersDisliked
+            Sauce.findByIdAndUpdate(id, { $inc: {dislikes: 1}, $push: {usersDisliked: userId}}) // on ajoute 1 pour les likes et ont ajoute l'id utilisateur au []usersLiked
+            res.status(201).json({ message: "Vous n'avez pas aimé cette sauce !"})
+          
+          }
+          
+        } catch (error) {
+          res.status(400).json({ error })          
+        }       
         break;
 
       default: break;
