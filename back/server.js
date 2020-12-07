@@ -1,59 +1,24 @@
 import https from "https";
+import http from 'http';
+import path  from 'path';
+import fs from "fs";
+
 import app from './app';
 
-const normalizePort = val => {
-  const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    return val;
-  }
-  if (port >= 0) {
-    return port;
-  }
-  return false;
+const  certificate  = {
+    key: fs.readFileSync(path.join(__dirname, '/src/certificates', 'key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, '/src/certificates', 'cert.pem'))
 };
-const port = normalizePort(process.env.PORT || '8080');
-app.set('port', port);
+const sslServer = https.createServer( certificate, app);
 
-const errorHandler = error => {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
-  const address = server.address();
-  const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges.');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use.');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
-};
 
-const server = https.createServer(app);
-
-server.on('error', errorHandler);
-server.on('listening', () => {
-  const address = server.address();
-  const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
-  console.log('Listening on ' + bind);
+sslServer.listen (3443, ()=>{
+  console.log('Connected to secure server');
 });
 
-server.listen(port);
 
+const server = http.createServer(app);
 
-/*
-app.set('port', process.env.PORT || 8000);
-const server = https.createServer(app);
-
-
-server.listen(process.env.PORT || 3000, ()=>{
-    console.log('connected to server');
-});*/
-
-
+server.listen(3000, ()=>{
+  console.log('Connected to simple server');
+});
