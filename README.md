@@ -14,7 +14,8 @@
 
 ## :gear: INITIALISATION DU PROJET
 * Cloner ce dépôt github sur votre :computer:
-* Lancer la commande `npm start` dans le terminal depuis le dossier :file_folder: `frontend`.
-* Coller le fichier `.env` fourni dans le dossier Backend (Variables d'environnement necessaire pour la connexion à la base de données)
-* Lancer la commande `nodemon server` dans le terminal depuis le dossier :file_folder: `backend`.
-* Rendez-vous sur `http://localhost:4200/`. L'application va se recharger automatiquement si vous modifiez un fichier source.
+* Depuis le dossier :file_folder: `frontend`. lancer `npm i` , puis `npm start` 
+* Coller le fichier `.env`  dans le dossier Backend .
+* Dans le dossier :file_folder: `src`, creez un dossier :file_folder: `certificates` et glissez les certificats fournis à l'interieur.
+* Depuis le dossier :file_folder: `back`, lancer `npm i`, puis `npm start`
+* Rendez-vous sur `http://localhost:4200/`
