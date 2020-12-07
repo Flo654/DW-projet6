@@ -2,7 +2,9 @@ import Sauce from '../models/sauce';
 import fsExtra from'fs-extra';
 import resizeImages from "../utils/resizeImages";
 
-//creer une sauce
+//////////////////////////////////////
+///////////// create sauce  //////////
+//////////////////////////////////////
 export const createSauce = async (req,res,next)=>{   
     try { 
         const sauceObjet = JSON.parse(req.body.sauce);
@@ -21,7 +23,9 @@ export const createSauce = async (req,res,next)=>{
     };
 };
 
-// Obtenir la liste de toutes les sauces
+//////////////////////////////////////
+/////////// get all sauces  //////////
+//////////////////////////////////////
 export const readAllSauces = async (req,res,next)=>{   
     try { 
         const result = await Sauce.find();
@@ -31,7 +35,9 @@ export const readAllSauces = async (req,res,next)=>{
     };
 };
 
-// Obtenir une sauce grâce a son Id
+//////////////////////////////////////
+////////// get one sauce  ////////////
+//////////////////////////////////////
 export const readOneSauce = async (req,res,next)=>{   
     try { 
         const id = req.params.id;
@@ -42,7 +48,9 @@ export const readOneSauce = async (req,res,next)=>{
     };
 };
 
-// Modifier une sauce
+//////////////////////////////////////
+/////////// modify sauce  ////////////
+//////////////////////////////////////
 export const updateSauce = async(req, res, next) => {      
     try {
       const id = req.params.id;      
@@ -51,7 +59,7 @@ export const updateSauce = async(req, res, next) => {
           ...JSON.parse(req.body.sauce),
           imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
       } : { ...req.body};
-      //suppression de l'ancienne image si changement d'image lors de la modification du produit
+      //delete old image if changing image
       if(req.file !== undefined){
         const sauceData =  await Sauce.findById(id);
         const imageToRemove = sauceData.imageUrl;
@@ -69,7 +77,9 @@ export const updateSauce = async(req, res, next) => {
     } ;
 };
 
-//supprimer une sauce
+//////////////////////////////////////
+////////// delete sauce  /////////////
+//////////////////////////////////////
 export const deleteSauce = async (req,res,next)=>{   
    try { 
         const id = req.params.id;
@@ -83,8 +93,9 @@ export const deleteSauce = async (req,res,next)=>{
     }
 }
 
-
-//like ou dislike d'une sauce
+//////////////////////////////////////
+//////// like ou dislike sauce  //////
+//////////////////////////////////////
 
 export const likeOrDislikeSauce = async(req, res, next)=>{
   try {
@@ -94,23 +105,23 @@ export const likeOrDislikeSauce = async(req, res, next)=>{
     const sauce = await Sauce.findById(id);
     
     switch (likes) {
-      case 1:
+      case 1: // case if like=1
         try {
-          if (!sauce.usersLiked.includes(userId)) {// ont verifie si l'Id de l'utilisateur n'est pas encore dans le tableau usersLiked 
-            await Sauce.findByIdAndUpdate(id, { $inc: {likes: 1}, $push: {usersLiked: userId}}) // on ajoute 1 pour les likes et ont ajoute l'id utilisateur au []usersLiked
+          if (!sauce.usersLiked.includes(userId)) {//check if user is already in usersLiked array
+            await Sauce.findByIdAndUpdate(id, { $inc: {likes: 1}, $push: {usersLiked: userId}}) // incremente like and push user in  []usersLiked
             res.status(201).json({ message: 'vous avez aimé cette sauce !'})    
         }}catch (error) {
           res.status(400).json({ error })
         }      
         break;
 
-      case 0:
+      case 0: // case if like =0
         try {
-          if (sauce.usersLiked.includes(userId)){ // si l'id utilisateur est deja présent dans le tableau usersLiked ont retire son vote et son id du []usersLiked
+          if (sauce.usersLiked.includes(userId)){ // if user is already in userLiked , decremente like and pull user from array
             await Sauce.findByIdAndUpdate(id, { $inc: {likes: -1}, $pull: {usersLiked: userId}})
             res.status(201).json({ message: 'Like retiré !'})
             break;
-          } else if (sauce.usersDisliked.includes(userId)){  // si l'id utilisateur est deja présent dans le tableau usersDisliked ont retire son vote et son id du []usersDisliked
+          } else if (sauce.usersDisliked.includes(userId)){  //  if user is already in userDisliked , decremente dislike and pull user from array
         
             await Sauce.findByIdAndUpdate(id, { $inc: {dislikes: -1}, $pull: {usersDisliked: userId}})
             res.status(201).json({ message: 'Dislike retiré !'})
@@ -122,10 +133,10 @@ export const likeOrDislikeSauce = async(req, res, next)=>{
         
         break;
 
-      case -1:
+      case -1: //case if like =-1
         try {
-          if (!sauce.usersDisliked.includes(userId)){ // ont verifie si l'Id de l'utilisateur n'est pas encore dans le []usersDisliked
-            Sauce.findByIdAndUpdate(id, { $inc: {dislikes: 1}, $push: {usersDisliked: userId}}) // on ajoute 1 pour les likes et ont ajoute l'id utilisateur au []usersLiked
+          if (!sauce.usersDisliked.includes(userId)){ // check if user is already in []usersDisliked
+            Sauce.findByIdAndUpdate(id, { $inc: {dislikes: 1}, $push: {usersDisliked: userId}}) //incremente dislike and push user in []usersDisliked
             res.status(201).json({ message: "Vous n'avez pas aimé cette sauce !"})
           
           }

@@ -1,5 +1,8 @@
 import resizeOptimizeImages from "resize-optimize-images";
-// fonction qui permet de redimentionner une image
+
+///////////////////////////////////////////////////
+//////////// resizing image function //////////////
+///////////////////////////////////////////////////
 const resizeImages = async (url)=>{
     
     const options = {

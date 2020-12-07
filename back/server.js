@@ -5,6 +5,12 @@ import fs from "fs";
 
 import app from './app';
 
+
+
+/////////////////////////////////////////////////////
+///////// mise en place du serveur securisé /////////
+/////////////////////////////////////////////////////
+
 const  certificate  = {
     key: fs.readFileSync(path.join(__dirname, '/src/certificates', 'key.pem')),
     cert: fs.readFileSync(path.join(__dirname, '/src/certificates', 'cert.pem'))
@@ -16,7 +22,9 @@ sslServer.listen (3443, ()=>{
   console.log('Connected to secure server');
 });
 
-
+//////////////////////////////////////////////////////////
+/////////// mise en place d'un serveur simple ////////////
+//////////////////////////////////////////////////////////
 const server = http.createServer(app);
 
 server.listen(3000, ()=>{

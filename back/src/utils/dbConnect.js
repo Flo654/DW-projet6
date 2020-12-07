@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 import dotenv from 'dotenv'
 
-dotenv.config()
+dotenv.config() //loading environment variables and verify their presence
+
+//////////////////////////////////////////////
+////////////connection to Db function/////////
+/////////////////////////////////////////////
 
 const dbConnection = async()=>{
     try {

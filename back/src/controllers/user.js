@@ -1,10 +1,18 @@
-// controllers user
+////////////////////////////////////////
+////// import security modules /////////
+////////////////////////////////////////
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import User from '../models/user';
 import 'dotenv/config';
 
+//////////////////////////////////////
+////// import model 'user' ///////////
+//////////////////////////////////////
+import User from '../models/user';
 
+//////////////////////////////////////
+/////////// signup  user //////////////
+//////////////////////////////////////
  export const createUser = async(req, res, next) =>{
     try {
         const hashPassword = await bcrypt.hash(req.body.password, 10);
@@ -21,19 +29,21 @@ import 'dotenv/config';
 
 };
 
-// login user controller
+//////////////////////////////////////
+/////////// login user //////////////
+//////////////////////////////////////
 export const readUser =async(req, res, next) =>{
     try {       
         const userExist = await User.findOne({ email: req.body.email})   
         
         if(!userExist){
             
-            return res.status(401).json({ error: 'Utilisateur non trouvé ou password erroné!'})
+            return res.status(401).json({ error: 'Utilisateur non trouvé !'})
         };  
         const passVerify = await bcrypt.compare(req.body.password, userExist.password);
         if(!passVerify){
             
-            return res.status(402).json({ error: 'Utilisateur non trouvé ou password erroné!'})
+            return res.status(402).json({ error: 'Password erroné!'})
         };  
         res.status(200).json({
             userId: userExist._id,
